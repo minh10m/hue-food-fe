@@ -34,42 +34,68 @@ const CartItem = ({item}) => {
   }
 
   return (
-    <div className="px-5">
-      <div className="lg:flex items-center lg:space-x-5">
-        <div>
+    <div className="px-5 py-4 border-b border-gray-800/50 last:border-b-0">
+      <div className="flex items-start space-x-4">
+        <div className="flex-shrink-0">
           <img
-            className="w-[5rem] h-[5rem] object-cover"
+            className="w-16 h-16 rounded-lg object-cover"
             src={item.food.images[0]}
-            alt=""
+            alt={item.food.name}
           />
         </div>
 
-        <div className="flex items-center justify-center lg:w-[70%]">
-          <div className="space-y-1 lg:space-y-3 w-full">
-            <p>{item.food.name}</p>
-            <div className="flex justify-between items-center">
-              <div className="flex items-center space-x-1">
-                <IconButton onClick={() => handleUpdateCartItem(-1)}>
-                  <RemoveCircleOutlineIcon />
+        <div className="flex-1 min-w-0">
+          <div className="flex justify-between items-start">
+            <div className="flex-1">
+              <h3 className="font-semibold text-gray-100 text-lg">{item.food.name}</h3>
+              <div className="flex items-center space-x-2 mt-2">
+                <IconButton 
+                  size="small" 
+                  onClick={() => handleUpdateCartItem(-1)}
+                  sx={{ color: 'text.secondary', '&:hover': { color: 'primary.main' } }}
+                >
+                  <RemoveCircleOutlineIcon fontSize="small" />
                 </IconButton>
 
-                <div className="w-5 h-5 text-sm items-center justify-center pl-2">
+                <span className="w-8 text-center font-medium text-gray-300">
                   {item.quantity}
-                </div>
+                </span>
 
-                <IconButton onClick={() => handleUpdateCartItem(1)}>
-                  <AddCircleOutlineIcon />
+                <IconButton 
+                  size="small" 
+                  onClick={() => handleUpdateCartItem(1)}
+                  sx={{ color: 'text.secondary', '&:hover': { color: 'primary.main' } }}
+                >
+                  <AddCircleOutlineIcon fontSize="small" />
                 </IconButton>
               </div>
             </div>
+            
+            <div className="text-right ml-4">
+              <p className="font-semibold text-lg text-gray-100">
+                {(item.totalPrice/1000).toLocaleString()}.000đ
+              </p>
+            </div>
           </div>
-          <p className="text-m">
-            {item.totalPrice/1000}.000vnd
-          </p>
+          
+          {item.ingredients && item.ingredients.length > 0 && (
+            <div className="flex flex-wrap gap-1 mt-3">
+              {item.ingredients.map((ingredient, index) => (
+                <Chip 
+                  key={index}
+                  label={ingredient} 
+                  size="small" 
+                  sx={{ 
+                    backgroundColor: 'rgba(233, 30, 99, 0.1)', 
+                    color: 'primary.main',
+                    fontSize: '0.75rem',
+                    height: 20
+                  }} 
+                />
+              ))}
+            </div>
+          )}
         </div>
-      </div>
-      <div className="pt-3 space-x-2">
-         {item.ingredients.map((ingredient)=> <Chip label={ingredient}/>)}
       </div>
     </div>
   );

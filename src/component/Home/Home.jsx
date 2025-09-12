@@ -24,34 +24,28 @@ export const Home = () => {
 
 
   return (
-    <div className="pb-10">
-      <section className="banner -z-50 relative flex flex-col justify-center items-center">
+    <div className="pb-12">
+      <section className="banner relative flex flex-col justify-center items-center">
 
-         <div className='w-[50vw] z-10 text-center'>
-            <p className="text-2xl lg:text-6xl font-bold z-10 py-5">Hue food</p>
-            <p className="z-10 text-gray-300 text-xl lg: text-4xl">Tận hưởng thức ăn, dịch vụ của chúng tôi </p>
+         <div className='w-[90vw] md:w-[70vw] lg:w-[50vw] z-10 text-center'>
+            <p className="text-3xl md:text-5xl lg:text-6xl font-extrabold z-10 py-4 tracking-tight">Hue Food</p>
+            <p className="z-10 text-gray-300 text-lg md:text-2xl lg:text-3xl">Tận hưởng món ngon và dịch vụ tận tâm</p>
          </div>
 
-         <div className='cover absolute top-0 left-0 right-0'>
-
-         </div>
-
-         <div className='fadout'>
-
-         </div>
+         <div className='cover absolute inset-0'></div>
       </section>
 
-      <section className='p-10 lg: py-10 lg:px-20'>
-          <p className='text-2xl font-semibold text-gray-400 py-3 px-10'>Top meels</p>
+      <section className='px-5 py-8 lg:py-12 lg:px-20'>
+          <p className='text-xl md:text-2xl font-semibold text-gray-300 py-3'>Món nổi bật</p>
           <MultiItemCarous/>
       </section>
 
       <section className='px-5 lg:px-20'>
-          <h1 className='text-2xl font-semibold text-gray-400 pb-5'>Order từ những cừa hàng được yêu thích </h1>
-          <div className='flex flex-wrap items-center justify-around gap-5'>
+          <h1 className='text-xl md:text-2xl font-semibold text-gray-300 pb-4'>Đặt từ cửa hàng được yêu thích</h1>
+          <div className='flex flex-wrap items-stretch justify-around gap-5'>
             {
               restaurant.restaurants.map((item)=>
-                <RestaurantCard item = {item}/>
+                <RestaurantCard key={item.id} item = {item}/>
               )
             }
           </div>

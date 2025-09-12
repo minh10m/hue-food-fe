@@ -13,11 +13,13 @@ export const style = {
    top: '50%',
    left: '50%',
    transform: 'translate(-50%, -50%)',
-   width: 400,
+   width: 420,
+   maxWidth: '92vw',
    bgcolor: 'background.paper',
-   outlined: "none",
+   outline: 'none',
+   borderRadius: 12,
    boxShadow: 24,
-   p: 4,
+   p: 3.5,
  };
 
 const Cart = () => {
