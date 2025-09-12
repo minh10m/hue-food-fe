@@ -22,34 +22,34 @@ export const Navbar = () => {
     navigate("/my-profile")
   };
   return (
-    <div className="sticky top-0 px-5 z-[50] py-[.8rem] bg-[#862f58] lg:px-20 flex justify-between">
-      <div className="lg: mr-10 cursor-pointer flex items-center space-x-4">
-        <li onClick={()=> navigate("/")} className="logo font-semibold text-gray-30 text-2xld">Hue Food</li>
+    <div className="sticky top-0 px-5 z-[50] py-3 bg-[#0f0f12]/90 backdrop-blur lg:px-20 flex items-center justify-between border-b border-white/5">
+      <div className="mr-2 lg:mr-10 cursor-pointer flex items-center space-x-3">
+        <li onClick={()=> navigate("/")} className="logo font-extrabold tracking-tight text-white text-2xl">Hue Food</li>
       </div>
 
-      <div className="flex items-center space-x-2 lg:space-x-10">
-        <div className="">
-          <IconButton>
-            <SearchIcon sx={{ fontSize: "1.5rem" }} />
-          </IconButton> 
-        </div>  
+      <div className="flex items-center space-x-1 lg:space-x-6">
+        <div>
+          <IconButton size="small" color="inherit">
+            <SearchIcon sx={{ fontSize: "1.25rem", opacity: 0.9 }} />
+          </IconButton>
+        </div>
 
-        <div className="">
+        <div>
           {auth.user ? (
-            <Avatar className='cursor-pointer' onClick={handleAvatarClick} sx={{ bgcolor: "white", color: "blue" }}>
-              {auth.user?.fullName[0].toUpperCase()}
-            </Avatar> 
+            <Avatar className='cursor-pointer ring-1 ring-white/10' onClick={handleAvatarClick} sx={{ bgcolor: "#e91e63", color: "#fff", width: 36, height: 36, fontWeight: 600 }}>
+              {auth.user?.fullName?.[0]?.toUpperCase?.() || 'U'}
+            </Avatar>
           ) : (
-            <IconButton onClick={() => navigate("account/login")}> 
+            <IconButton size="small" color="inherit" onClick={() => navigate("account/login")}>
               <PersonIcon/>
             </IconButton>
           )}
         </div>
 
-        <div className="">
-          <IconButton onClick={() => navigate("/cart")}>
-            <Badge color="primary" badgeContent={cart.cart?.items.length}>
-              <ShoppingCartIcon sx={{ fontSize: "1.5rem" }} />
+        <div>
+          <IconButton size="small" color="inherit" onClick={() => navigate("/cart")}>
+            <Badge color="primary" badgeContent={cart.cart?.items?.length || 0}>
+              <ShoppingCartIcon sx={{ fontSize: "1.25rem" }} />
             </Badge>
           </IconButton>
         </div>

@@ -55,17 +55,20 @@ const ProfileNavigation = (open, handleClose) => {
       open={isSmallScreen?open:true} 
       anchor='left' 
       sx={{zIndex: 1}}>
-        <div className='sticky w-[50vw] lg:w-[20vw] h-[110vh] flex flex-col justify-center text-xl gap-7 pt-16 mt-5'>
+        <div className='w-[50vw] lg:w-[20vw] h-[110vh] flex flex-col justify-start text-lg gap-2 pt-8 px-4'>
           {
-            menu.map((item, index) => <>
-            <div onClick={() => handleNavigate(item)} className=' px-5 flex items-center space-x-5 cursor-pointer'>
-              {item.icon}
-              <span>{item.title}</span>
-            </div>
-
-            {index !== menu.length - 1 && <Divider/>}
-            </>
-            )
+            menu.map((item, index) => (
+              <React.Fragment key={item.title}>
+                <div 
+                  onClick={() => handleNavigate(item)} 
+                  className='px-4 py-3 flex items-center space-x-4 cursor-pointer rounded-lg hover:bg-gray-800/50 transition-colors duration-200'
+                >
+                  <span className="text-gray-400">{item.icon}</span>
+                  <span className="text-gray-200 font-medium">{item.title}</span>
+                </div>
+                {index !== menu.length - 1 && <Divider sx={{ borderColor: 'rgba(255,255,255,0.1)', my: 1 }} />}
+              </React.Fragment>
+            ))
           }
         </div>
       </Drawer>

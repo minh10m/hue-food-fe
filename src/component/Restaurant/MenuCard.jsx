@@ -47,56 +47,92 @@ const MenuCard = ({item}) => {
   };
   
   return (
-    <Accordion>
+    <Accordion 
+      sx={{ 
+        backgroundColor: 'background.paper',
+        border: '1px solid',
+        borderColor: 'divider',
+        borderRadius: 2,
+        mb: 2,
+        '&:before': { display: 'none' },
+        '&.Mui-expanded': { margin: 0 }
+      }}
+    >
       <AccordionSummary
-        expandIcon={<ExpandMoreIcon />}
+        expandIcon={<ExpandMoreIcon sx={{ color: 'primary.main' }} />}
         aria-controls="panel1-content"
         id="panel1-header"
+        sx={{ 
+          px: 3,
+          py: 2,
+          '&.Mui-expanded': { minHeight: 'auto' },
+          '& .MuiAccordionSummary-content': { margin: '12px 0' }
+        }}
       >
-        <div className="lg:flex items-center justify-between">
-          <div className="lg:flex items-center lg:gap-5">
+        <div className="flex items-center justify-between w-full">
+          <div className="flex items-center gap-4">
             <img
-              className="w-[7rem] h-[7rem] object-cover"
+              className="w-20 h-20 object-cover rounded-xl"
               src={item.images[0]}
-              alt=""
+              alt={item.name}
             />
 
-            <div className="space-y-1 lg:space-x-5 lg:max-w-2xl">
-              <p className="font-semibold text-xl pl-5">{item.name}</p>
-              <p>{item.price}vnd</p>
-              <p className="text-gray-400">{item.description}</p>
+            <div className="flex-1">
+              <h3 className="font-bold text-xl text-gray-100 mb-1">{item.name}</h3>
+              <p className="text-lg font-semibold text-primary.main mb-1">
+                {(item.price/1000).toLocaleString()}.000đ
+              </p>
+              <p className="text-gray-400 text-sm line-clamp-2">{item.description}</p>
             </div>
           </div>
         </div>
       </AccordionSummary>
-      <AccordionDetails>
+      
+      <AccordionDetails sx={{ px: 3, pb: 3 }}>
         <form onSubmit={handleAddItemToCart}>
-          <div className="flex gap-5 flex-wrap">
-            {
-            Object.keys(categorizeIngredients(item.ingredients)).map((category) => 
-              <div>
-                <p>{category}</p>
-                <FormGroup>
-                  {categorizeIngredients(item.ingredients)[category].map((item) => 
-                    <FormControlLabel 
-                    key={item.id} 
-                    control={
-                    <Checkbox 
-                    onChange={()=>
-                      handleCheckBoxChange(item.name)
-                    }/>} label={item.name} />
-                  )}
-                </FormGroup>
-              </div>
-            )}
+          <div className="mb-6">
+            <h4 className="text-lg font-semibold text-gray-100 mb-4">Tùy chọn thành phần</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {
+                Object.keys(categorizeIngredients(item.ingredients)).map((category) => 
+                  <div key={category} className="bg-gray-800/30 rounded-lg p-4">
+                    <h5 className="font-medium text-gray-200 mb-3">{category}</h5>
+                    <FormGroup>
+                      {categorizeIngredients(item.ingredients)[category].map((ingredient) => 
+                        <FormControlLabel 
+                          key={ingredient.id} 
+                          control={
+                            <Checkbox 
+                              checked={selectedIngredients.includes(ingredient.name)}
+                              onChange={() => handleCheckBoxChange(ingredient.name)}
+                              sx={{ color: 'primary.main' }}
+                            />
+                          } 
+                          label={<span className="text-gray-300">{ingredient.name}</span>} 
+                        />
+                      )}
+                    </FormGroup>
+                  </div>
+                )
+              }
+            </div>
           </div>
 
-          <div className="pt-5">
+          <div className="flex justify-end">
             <Button 
-            variant="contained" 
-            disabled={false} 
-            type="submit"
-            >{true?"Add to Cart":"Out of stock"}</Button>
+              variant="contained" 
+              disabled={false} 
+              type="submit"
+              sx={{
+                borderRadius: 2,
+                textTransform: 'none',
+                fontWeight: 600,
+                px: 4,
+                py: 1.5
+              }}
+            >
+              {true ? "Thêm vào giỏ hàng" : "Hết hàng"}
+            </Button>
           </div>
         </form>
       </AccordionDetails>
