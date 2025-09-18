@@ -22,7 +22,16 @@ export const Navbar = () => {
     navigate("/my-profile")
   };
   return (
-    <div className="sticky top-0 px-5 z-[50] py-3 bg-[#0f0f12]/90 backdrop-blur lg:px-20 flex items-center justify-between border-b border-white/5">
+    <div
+    className="
+      fixed top-0 left-0 right-0 z-[50]
+      h-14 md:h-16
+      px-5 lg:px-20
+      bg-[#0f0f12]/90 backdrop-blur
+      border-b border-white/5
+      flex items-center justify-between
+    "
+  >
       <div className="mr-2 lg:mr-10 cursor-pointer flex items-center space-x-3">
         <li onClick={()=> navigate("/")} className="logo font-extrabold tracking-tight text-white text-2xl">Hue Food</li>
       </div>

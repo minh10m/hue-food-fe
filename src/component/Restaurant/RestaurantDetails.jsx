@@ -85,19 +85,11 @@ const RestaurantDetails = () => {
                 />
             </Grid>
 
-            <Grid item xs={12} lg={6}>
+            <Grid item xs={12}>
                 <img 
                   className='w-full h-[25vh] object-cover rounded-xl' 
-                  src={restaurant.restaurant?.images[0]} 
-                  alt="Restaurant interior" 
-                />
-            </Grid>
-
-            <Grid item xs={12} lg={6}>
-                <img 
-                  className='w-full h-[25vh] object-cover rounded-xl' 
-                  src={restaurant.restaurant?.images[1]} 
-                  alt="Restaurant food" 
+                  src={restaurant.restaurant?.image} 
+                  alt="Restaurant" 
                 />
             </Grid>
           </Grid>

@@ -11,13 +11,12 @@ const CustomerRoute = () => {
   return (
     <div>
       <Navbar/>
-
       <Routes>
-         <Route path='/' element={<Home/>}/>
-         <Route path='/account/:register' element={<Home/>}/>
-         <Route path='/restaurant/:city/:title/:id' element={<RestaurantDetails/>}/>
-         <Route path='/cart' element={<Cart/>}/>
-         <Route path='/my-profile/*' element={<Profile/>}/>
+          <Route path='/' element={<Home/>}/>
+          <Route path='/account/:register' element={<Home/>}/>
+          <Route path='/restaurant/:city/:title/:id' element={<RestaurantDetails/>}/>
+          <Route path='/cart' element={<Cart/>}/>
+          <Route path='/my-profile/*' element={<Profile/>}/>
       </Routes>
       <Auth/>
     </div>

@@ -20,7 +20,7 @@ const RestaurantCard = ({item}) => {
 
   const handleNavigateToRestaurant = () => {
     if(item.open){
-      navigate(`/restaurant/${item.address.city}/${item.name}/${item.id}`)
+      navigate(`/restaurant/${item.city}/${item.name}/${item.id}`)
     }
   }
   return (
@@ -40,7 +40,7 @@ const RestaurantCard = ({item}) => {
         >
           <img
             className='w-full h-[12rem] object-cover group-hover:scale-105 transition-transform duration-300' 
-            src={item.images[0]}
+            src={item.image}
             alt={item.name} 
           />
           <Chip 
