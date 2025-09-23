@@ -6,7 +6,7 @@ import { ADD_TO_FAVORITE_FAILURE, ADD_TO_FAVORITE_REQUEST, ADD_TO_FAVORITE_SUCCE
       user: null,
       isLoading: false,
       error: null,
-      jwt: null,
+      jwt: localStorage.getItem("jwt") || null,
       favorites: [],
       success: null
 
@@ -38,8 +38,9 @@ import { ADD_TO_FAVORITE_FAILURE, ADD_TO_FAVORITE_REQUEST, ADD_TO_FAVORITE_SUCCE
             return {
                ...state,
                isLoading: false,
-               user: action.payload,
-               favorites: action.payload.favorites
+               // Nếu đã logout (jwt null), bỏ qua kết quả getUser cũ để tránh hồi sinh user
+               user: state.jwt ? action.payload : null,
+               favorites: state.jwt ? action.payload.favorites : []
             }
          case ADD_TO_FAVORITE_SUCCESS:
             return {

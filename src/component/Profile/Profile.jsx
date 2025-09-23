@@ -24,8 +24,6 @@ const Profile = () => {
         <Route path='/address' element={<Address/>}/>
         <Route path='/favorites' element={<Favorites/>}/>
         <Route path='/events' element={<Event/>}/>
-
-
         </Routes>
       </div>
     </div>

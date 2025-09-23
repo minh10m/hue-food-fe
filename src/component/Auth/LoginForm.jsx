@@ -1,8 +1,8 @@
 
-import { Button, TextField, Typography } from '@mui/material'
+import { Button, TextField, Typography, Alert } from '@mui/material'
 import { Field, Form, Formik } from 'formik'
-import React from 'react'
-import { useDispatch } from 'react-redux'
+import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { loginUser } from '../../State/Authentication/Action'
 
@@ -16,6 +16,17 @@ const LoginForm = () => {
   const navigate = useNavigate()
 
   const dispatch = useDispatch()
+  const { auth } = useSelector((store) => store)
+  const [errorOpen, setErrorOpen] = useState(false)
+  const [errorMsg, setErrorMsg] = useState('Đăng nhập thất bại. Vui lòng kiểm tra lại email/mật khẩu.')
+
+  useEffect(() => {
+    if (auth?.error) {
+      const msg = auth.error?.response?.data?.message || auth.error?.message || errorMsg
+      setErrorMsg(msg)
+      setErrorOpen(true)
+    }
+  }, [auth?.error])
 
   const handleSubmit = (values) => {
     dispatch(loginUser({userData: values, navigate}))
@@ -29,6 +40,12 @@ const LoginForm = () => {
       <Typography variant='body2' align='center' sx={{ color: 'text.secondary', mb: 1.5 }}>
         Đăng nhập để tiếp tục trải nghiệm Hue Food
       </Typography>
+
+      {errorOpen && (
+        <Alert role="alert" severity="error" variant="filled" sx={{ mb: 2 }} onClose={() => setErrorOpen(false)}>
+          {errorMsg}
+        </Alert>
+      )}
 
       <Formik onSubmit={handleSubmit} initialValues={initialValues}>
         <Form>

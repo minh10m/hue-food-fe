@@ -20,7 +20,7 @@ export const style = {
    borderRadius: 12,
    boxShadow: 24,
    p: 3.5,
- };
+};
 
 const Cart = () => {
 
@@ -69,7 +69,7 @@ const Cart = () => {
       city: Yup.string().required("City is required")
    })
   return (
-    <div>
+    <div className='pt-16 md:pt-20'>
       <main className="lg:flex justify-between">
         <section className="lg:w-[30%] space-y-6 lg:min-h-screen pt-10">
           {cart.cartItems.map((item) => 

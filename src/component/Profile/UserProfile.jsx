@@ -11,7 +11,6 @@ const UserProfile = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    console.log('log out');
     dispatch(logout());
     navigate("/");
   }

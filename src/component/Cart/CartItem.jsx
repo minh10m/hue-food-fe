@@ -73,7 +73,7 @@ const CartItem = ({item}) => {
             
             <div className="text-right ml-4">
               <p className="font-semibold text-lg text-gray-100">
-                {(item.totalPrice/1000).toLocaleString()}.000đ
+                {(item.totalPrice/1000).toLocaleString()}.000VND
               </p>
             </div>
           </div>
