@@ -36,8 +36,14 @@ export const Navbar = () => {
 
         <div>
           {auth.user ? (
-            <Avatar className='cursor-pointer ring-1 ring-white/10' onClick={handleAvatarClick} sx={{ bgcolor: "#e91e63", color: "#fff", width: 36, height: 36, fontWeight: 600 }}>
-              {auth.user?.fullName?.[0]?.toUpperCase?.() || 'U'}
+            <Avatar
+              src={auth.user?.avatarUrl || undefined}
+              alt={auth.user?.fullName || 'User'}
+              className='cursor-pointer ring-1 ring-white/10'
+              onClick={handleAvatarClick}
+              sx={{ bgcolor: "#e91e63", color: "#fff", width: 36, height: 36, fontWeight: 600 }}
+            >
+              {!auth.user?.avatarUrl && (auth.user?.fullName?.[0]?.toUpperCase?.() || 'U')}
             </Avatar>
           ) : (
             <IconButton size="small" color="inherit" onClick={() => navigate("account/login")}>

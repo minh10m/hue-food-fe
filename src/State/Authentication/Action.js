@@ -36,6 +36,10 @@ export const loginUser = (reqData) => async(dispatch) => {
          reqData.navigate("/")
       }
       dispatch({type: LOGIN_SUCCESS, payload: data.jwt})
+      // Immediately fetch the user profile so UI (e.g., avatar) updates without waiting for App effect
+      if (data.jwt) {
+         dispatch(getUser(data.jwt))
+      }
       console.log("Login success", data)
 
    } catch (err) {
