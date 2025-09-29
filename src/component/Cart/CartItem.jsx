@@ -2,36 +2,30 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import { Chip, IconButton } from "@mui/material";
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { removeCartItem, updateCartItem } from "../../State/Cart/Action";
-const CartItem = ({item}) => {  
+import { useDispatch } from "react-redux";
+import { updateCartItem, removeCartItem } from "../../State/Cart/Action";
 
-  const {auth, cart} = useSelector((store) => store)
-
-  const navigate = useNavigate();
-
+const CartItem = ({ item }) => {
   const dispatch = useDispatch();
 
-  const jwt = localStorage.getItem('jwt');
-
-  const handleUpdateCartItem = (value) => {
-    if (value === -1 && item.quantity === 1){
-      handleRemoveCartItem()
-    } 
-    const data = {
-      cartItemId: item.id,
-      quantity: item.quantity + value,
+  const handleUpdateCartItem = (delta) => {
+    // Nếu giảm xuống 0 thì xoá luôn
+    if (delta === -1 && item.quantity === 1) {
+      dispatch(removeCartItem(item.id));
+      return;
     }
 
-    console.log("data",data)
+    const nextQty = item.quantity + delta;
+    if (nextQty < 1) return; // an toàn
 
-    dispatch(updateCartItem({data, jwt}))
-  }
+    // Action mới nhận { cartItemId, quantity } (không bọc trong data, không cần jwt)
+    dispatch(updateCartItem({ cartItemId: item.id, quantity: nextQty }));
+  };
 
   const handleRemoveCartItem = () => {
-    dispatch(removeCartItem({cartItemId: item.id, jwt: auth.jwt || jwt}))
-  }
+    // Action mới nhận trực tiếp cartItemId
+    dispatch(removeCartItem(item.id));
+  };
 
   return (
     <div className="px-5 py-4 border-b border-gray-800/50 last:border-b-0">
@@ -39,20 +33,23 @@ const CartItem = ({item}) => {
         <div className="flex-shrink-0">
           <img
             className="w-16 h-16 rounded-lg object-cover"
-            src={item.food.images[0]}
-            alt={item.food.name}
+            src={item.food?.images?.[0]}
+            alt={item.food?.name || "Food"}
           />
         </div>
 
         <div className="flex-1 min-w-0">
           <div className="flex justify-between items-start">
             <div className="flex-1">
-              <h3 className="font-semibold text-gray-100 text-lg">{item.food.name}</h3>
+              <h3 className="font-semibold text-gray-100 text-lg">
+                {item.food?.name}
+              </h3>
+
               <div className="flex items-center space-x-2 mt-2">
-                <IconButton 
-                  size="small" 
+                <IconButton
+                  size="small"
                   onClick={() => handleUpdateCartItem(-1)}
-                  sx={{ color: 'text.secondary', '&:hover': { color: 'primary.main' } }}
+                  sx={{ color: "text.secondary", "&:hover": { color: "primary.main" } }}
                 >
                   <RemoveCircleOutlineIcon fontSize="small" />
                 </IconButton>
@@ -61,36 +58,42 @@ const CartItem = ({item}) => {
                   {item.quantity}
                 </span>
 
-                <IconButton 
-                  size="small" 
+                <IconButton
+                  size="small"
                   onClick={() => handleUpdateCartItem(1)}
-                  sx={{ color: 'text.secondary', '&:hover': { color: 'primary.main' } }}
+                  sx={{ color: "text.secondary", "&:hover": { color: "primary.main" } }}
                 >
                   <AddCircleOutlineIcon fontSize="small" />
                 </IconButton>
               </div>
             </div>
-            
+
             <div className="text-right ml-4">
               <p className="font-semibold text-lg text-gray-100">
-                {(item.totalPrice/1000).toLocaleString()}.000VND
+                {(item.totalPrice / 1000).toLocaleString()}.000VND
               </p>
+              <button
+                onClick={handleRemoveCartItem}
+                className="text-xs text-red-400 hover:text-red-300 mt-1"
+              >
+                Xoá
+              </button>
             </div>
           </div>
-          
-          {item.ingredients && item.ingredients.length > 0 && (
+
+          {Array.isArray(item.ingredients) && item.ingredients.length > 0 && (
             <div className="flex flex-wrap gap-1 mt-3">
-              {item.ingredients.map((ingredient, index) => (
-                <Chip 
-                  key={index}
-                  label={ingredient} 
-                  size="small" 
-                  sx={{ 
-                    backgroundColor: 'rgba(233, 30, 99, 0.1)', 
-                    color: 'primary.main',
-                    fontSize: '0.75rem',
-                    height: 20
-                  }} 
+              {item.ingredients.map((ingredient, idx) => (
+                <Chip
+                  key={idx}
+                  label={ingredient}
+                  size="small"
+                  sx={{
+                    backgroundColor: "rgba(233, 30, 99, 0.1)",
+                    color: "primary.main",
+                    fontSize: "0.75rem",
+                    height: 20,
+                  }}
                 />
               ))}
             </div>

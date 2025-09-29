@@ -49,7 +49,7 @@ export const Navbar = () => {
               {auth.user?.fullName?.[0]?.toUpperCase?.() || 'U'}
             </Avatar>
           ) : (
-            <IconButton size="small" color="inherit" onClick={() => navigate("account/login")}>
+            <IconButton size="small" color="inherit" onClick={() => navigate("/account/login")}>
               <PersonIcon/>
             </IconButton>
           )}
