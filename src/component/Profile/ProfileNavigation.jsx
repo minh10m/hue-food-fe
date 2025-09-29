@@ -5,7 +5,6 @@ import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { AddReaction } from '@mui/icons-material';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
-import NotificationsIcon from '@mui/icons-material/Notifications';
 import EventIcon from '@mui/icons-material/Event';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useDispatch } from 'react-redux';
@@ -17,7 +16,6 @@ const menu = [
   { title: 'Favorites',     icon: <FavoriteIcon/> },
   { title: 'Address',       icon: <AddReaction/> },
   { title: 'Payments',      icon: <AccountBalanceWalletIcon/> },
-  { title: 'Notifications', icon: <NotificationsIcon/> },
   { title: 'Events',        icon: <EventIcon/> },
   { title: 'Logout',        icon: <LogoutIcon/> },
 ];
@@ -34,6 +32,9 @@ const ProfileNavigation = ({ open = false, onClose }) => {
 
   const handleNavigate = (item) => {
     if (item.title === 'Logout') {
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
+      localStorage.removeItem("role");
       dispatch(logout());
       navigate('/');
       onClose?.();

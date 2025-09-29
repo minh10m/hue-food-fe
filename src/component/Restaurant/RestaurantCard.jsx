@@ -65,8 +65,12 @@ const RestaurantCard = ({ item }) => {
       >
         <img
           className="w-full h-[12rem] object-cover group-hover:scale-105 transition-transform duration-300"
-          src={item.image}
-          alt={item.name}
+          src={item.image || 'https://via.placeholder.com/600x400?text=Restaurant'}
+          alt={item.name || 'Restaurant'}
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = 'https://via.placeholder.com/600x400?text=Restaurant';
+          }}
         />
         <Chip
           size="small"
@@ -89,9 +93,10 @@ const RestaurantCard = ({ item }) => {
               onClick={handleNavigateToRestaurant}
               className="font-bold text-xl cursor-pointer text-gray-100 hover:text-primary.main transition-colors"
             >
-              {item.name}
+              {item.name || 'Tên cửa hàng'}
             </h3>
-            <p className="text-gray-400 text-sm mt-1 line-clamp-2">{item.description}</p>
+            <p className="text-gray-400 text-sm mt-1 line-clamp-2">{item.description || item.cuisineType || 'Đặc trưng ẩm thực Huế'}</p>
+             <p className="text-gray-500 text-xs mt-1">{item.street}{item.street && item.city ? ', ' : ''}{item.city}</p>
           </div>
 
           {/* Nút Favorite mượt mà */}
@@ -140,9 +145,9 @@ const RestaurantCard = ({ item }) => {
         </div>
 
         <div className="flex items-center justify-between text-sm text-gray-500">
-          <span>⭐ 4.5</span>
+          <span>{item.cuisineType || 'Ẩm thực'}</span>
           <span>•</span>
-          <span>30-45 phút</span>
+          <span>{item.openingHours || 'Giờ mở cửa: cập nhật sau'}</span>
         </div>
       </div>
     </Card>
