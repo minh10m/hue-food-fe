@@ -3,16 +3,16 @@ import SearchIcon from "@mui/icons-material/Search";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { Avatar, Badge, IconButton } from "@mui/material";
 import React from "react";
-import { useSelector } from "react-redux";
+import { useSelector, shallowEqual } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import "./Navbar.css";
 
-
 export const Navbar = () => {
 
-  const {auth, cart} = useSelector(store => store)
-
   const navigate = useNavigate();
+
+  const auth = useSelector((s) => s.auth, shallowEqual);
+  const cart = useSelector((s) => s.cart, shallowEqual);
 
   const handleAvatarClick = () => {
     // if(auth.user?.role === 'ROLE_CUSTOMER' ){
@@ -22,7 +22,16 @@ export const Navbar = () => {
     navigate("/my-profile")
   };
   return (
-    <div className="sticky top-0 px-5 z-[50] py-3 bg-[#0f0f12]/90 backdrop-blur lg:px-20 flex items-center justify-between border-b border-white/5">
+    <div
+    className="
+      fixed top-0 left-0 right-0 z-[50]
+      h-14 md:h-16
+      px-5 lg:px-20
+      bg-[#0f0f12]/90 backdrop-blur
+      border-b border-white/5
+      flex items-center justify-between
+    "
+  >
       <div className="mr-2 lg:mr-10 cursor-pointer flex items-center space-x-3">
         <li onClick={()=> navigate("/")} className="logo font-extrabold tracking-tight text-white text-2xl">Hue Food</li>
       </div>
@@ -40,7 +49,7 @@ export const Navbar = () => {
               {auth.user?.fullName?.[0]?.toUpperCase?.() || 'U'}
             </Avatar>
           ) : (
-            <IconButton size="small" color="inherit" onClick={() => navigate("account/login")}>
+            <IconButton size="small" color="inherit" onClick={() => navigate("/account/login")}>
               <PersonIcon/>
             </IconButton>
           )}

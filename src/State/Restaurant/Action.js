@@ -1,234 +1,177 @@
+// src/State/Restaurant/Action.js
 import { api } from "../../component/config/api";
-import { CREATE_CATEGORY_REQUEST, CREATE_CATEGORY_SUCCESS, CREATE_EVENTS_FAILURE, CREATE_EVENTS_REQUEST, CREATE_EVENTS_SUCCESS, CREATE_RESTAURANT_FAILURE, CREATE_RESTAURANT_REQUEST, CREATE_RESTAURANT_SUCCESS, DELETE_EVENTS_FAILURE, DELETE_EVENTS_REQUEST, DELETE_EVENTS_SUCCESS, DELETE_RESTAURANT_FAILURE, DELETE_RESTAURANT_REQUEST, DELETE_RESTAURANT_SUCCESS, GET_ALL_EVENTS_FAILURE, GET_ALL_EVENTS_REQUEST, GET_ALL_EVENTS_SUCCESS, GET_ALL_RESTAURANTS_FAILURE, GET_ALL_RESTAURANTS_REQUEST, GET_ALL_RESTAURANTS_SUCCESS, GET_RESTAURANT_BY_ID_FAILURE, GET_RESTAURANT_BY_ID_REQUEST, GET_RESTAURANT_BY_ID_SUCCESS, GET_RESTAURANT_BY_USER_ID_FAILURE, GET_RESTAURANT_BY_USER_ID_REQUEST, GET_RESTAURANT_BY_USER_ID_SUCCESS, GET_RESTAURANTS_CATEGORY_FAILURE, GET_RESTAURANTS_CATEGORY_REQUEST, GET_RESTAURANTS_CATEGORY_SUCCESS, GET_RESTAURANTS_EVENTS_FAILURE, GET_RESTAURANTS_EVENTS_REQUEST, GET_RESTAURANTS_EVENTS_SUCCESS, UPDATE_RESTAURANT_FAILURE, UPDATE_RESTAURANT_REQUEST, UPDATE_RESTAURANT_STATUS_FAILURE, UPDATE_RESTAURANT_STATUS_REQUEST, UPDATE_RESTAURANT_STATUS_SUCCESS, UPDATE_RESTAURANT_SUCCESS } from "./ActionType";
+import {
+  CREATE_RESTAURANT_REQUEST, CREATE_RESTAURANT_SUCCESS, CREATE_RESTAURANT_FAILURE,
+  GET_ALL_RESTAURANTS_REQUEST, GET_ALL_RESTAURANTS_SUCCESS, GET_ALL_RESTAURANTS_FAILURE,
+  DELETE_RESTAURANT_REQUEST, DELETE_RESTAURANT_SUCCESS, DELETE_RESTAURANT_FAILURE,
+  UPDATE_RESTAURANT_REQUEST, UPDATE_RESTAURANT_SUCCESS, UPDATE_RESTAURANT_FAILURE,
+  GET_RESTAURANT_BY_ID_REQUEST, GET_RESTAURANT_BY_ID_SUCCESS, GET_RESTAURANT_BY_ID_FAILURE,
+  GET_RESTAURANT_BY_USER_ID_REQUEST, GET_RESTAURANT_BY_USER_ID_SUCCESS, GET_RESTAURANT_BY_USER_ID_FAILURE,
+  UPDATE_RESTAURANT_STATUS_REQUEST, UPDATE_RESTAURANT_STATUS_SUCCESS, UPDATE_RESTAURANT_STATUS_FAILURE,
+  CREATE_EVENTS_REQUEST, CREATE_EVENTS_SUCCESS, CREATE_EVENTS_FAILURE,
+  GET_ALL_EVENTS_REQUEST, GET_ALL_EVENTS_SUCCESS, GET_ALL_EVENTS_FAILURE,
+  DELETE_EVENTS_REQUEST, DELETE_EVENTS_SUCCESS, DELETE_EVENTS_FAILURE,
+  GET_RESTAURANTS_EVENTS_REQUEST, GET_RESTAURANTS_EVENTS_SUCCESS, GET_RESTAURANTS_EVENTS_FAILURE,
+  CREATE_CATEGORY_REQUEST, CREATE_CATEGORY_SUCCESS, CREATE_CATEGORY_FAILURE,
+  GET_RESTAURANTS_CATEGORY_REQUEST, GET_RESTAURANTS_CATEGORY_SUCCESS, GET_RESTAURANTS_CATEGORY_FAILURE,
+} from "./ActionType";
 
-export const getAllRestaurantAction = (token) => async(dispatch) => {
-   dispatch({type: GET_ALL_RESTAURANTS_REQUEST})
-   try {
-      const {data} = await api.get("/api/restaurants", {
-         headers: {
-            Authorization: `Bearer ${token}` 
-         } 
-      });
-     
-      dispatch({type: GET_ALL_RESTAURANTS_SUCCESS, payload: data})
+/** ===================== RESTAURANTS (public + admin) ===================== **/
 
-      console.log("all restaurants", data)
-   } catch (err) {
-      dispatch({type: GET_ALL_RESTAURANTS_FAILURE, payload: err})
-      console.log("error", err)
-   }
-}
+// GET /api/restaurants  (PUBLIC theo controller)
+export const getAllRestaurantAction = () => async (dispatch) => {
+  dispatch({ type: GET_ALL_RESTAURANTS_REQUEST });
+  try {
+    const { data } = await api.get(`/api/restaurants`, {
+      // đã có /^\/api\/restaurants\// trong PUBLIC_PATHS nên không cần meta
+    });
+    dispatch({ type: GET_ALL_RESTAURANTS_SUCCESS, payload: data });
+  } catch (err) {
+    dispatch({ type: GET_ALL_RESTAURANTS_FAILURE, payload: err?.response?.data || err.message });
+  }
+};
 
-export const getRestaurantId = (reqData) => async(dispatch) => {
-   dispatch({type: GET_RESTAURANT_BY_ID_REQUEST})
-   try {
-      const response = await api.get(`/api/restaurants/${reqData.restaurantId}`, {
-         headers: {
-            Authorization: `Bearer ${reqData.jwt}` 
-         } 
-      });
-     
-      dispatch({type: GET_RESTAURANT_BY_ID_SUCCESS, payload: response.data})
+// GET /api/restaurants/{id}  (PUBLIC theo controller)
+export const getRestaurantId = ({ restaurantId }) => async (dispatch) => {
+  dispatch({ type: GET_RESTAURANT_BY_ID_REQUEST });
+  try {
+    const { data } = await api.get(`/api/restaurants/${restaurantId}`);
+    dispatch({ type: GET_RESTAURANT_BY_ID_SUCCESS, payload: data });
+  } catch (err) {
+    dispatch({ type: GET_RESTAURANT_BY_ID_FAILURE, payload: err?.response?.data || err.message });
+  }
+};
 
-      console.log("restaurant by id", response.data)
-   } catch (err) {
-      dispatch({type: GET_RESTAURANT_BY_ID_FAILURE, payload: err})
-      console.log("error", err)
-   }
-}
+// GET /api/admin/restaurants/user  (ADMIN – controller không show ở trên nhưng bạn đang dùng)
+export const getRestaurantByUserId = () => async (dispatch) => {
+  dispatch({ type: GET_RESTAURANT_BY_USER_ID_REQUEST });
+  try {
+    const { data } = await api.get(`/api/admin/restaurants/user`);
+    dispatch({ type: GET_RESTAURANT_BY_USER_ID_SUCCESS, payload: data });
+  } catch (err) {
+    dispatch({ type: GET_RESTAURANT_BY_USER_ID_FAILURE, payload: err?.response?.data || err.message });
+  }
+};
 
-export const getRestaurantByUserId = (token) => async(dispatch) => {
-   dispatch({type: GET_RESTAURANT_BY_USER_ID_REQUEST})
-   try {
-      const {data} = await api.get("api/admin/restaurants/user", {
-         headers: {
-            Authorization: `Bearer ${token}` 
-         } 
-      });
-     
-      dispatch({type: GET_RESTAURANT_BY_USER_ID_SUCCESS, payload: data})
-      console.log("restaurant by user id", data)
-   } catch (err) {
-      dispatch({type: GET_RESTAURANT_BY_USER_ID_FAILURE, payload: err})
-      console.log("error", err)
-   }
-}
+// POST /api/admin/restaurants  (ADMIN)
+export const createRestaurant = ({ data: body }) => {
+  return async (dispatch) => {
+    dispatch({ type: CREATE_RESTAURANT_REQUEST });
+    try {
+      const { data } = await api.post(`/api/admin/restaurants`, body);
+      dispatch({ type: CREATE_RESTAURANT_SUCCESS, payload: data });
+    } catch (err) {
+      dispatch({ type: CREATE_RESTAURANT_FAILURE, payload: err?.response?.data || err.message });
+    }
+  };
+};
 
-export const createRestaurant = (reqData) => {
-   console.log("token--------------", reqData.token);
-   return async(dispatch) => {
-   dispatch({type: CREATE_RESTAURANT_REQUEST})
-   try {
-      const {data} = await api.post("api/admin/restaurants", reqData.data, {
-         headers: {
-            Authorization: `Bearer ${reqData.token}` 
-         } 
-      });
-     
-      dispatch({type: CREATE_RESTAURANT_SUCCESS, payload: data})
-      console.log("created restaurant: ", data)
-   } catch (err) {
-      dispatch({type: CREATE_RESTAURANT_FAILURE, payload: err})
-      console.log("error", err)
-   }
-}}
+// PUT /api/admin/restaurants/{id}  (ADMIN)
+export const updateRestaurant = ({ restaurantId, restaurantData }) => async (dispatch) => {
+  dispatch({ type: UPDATE_RESTAURANT_REQUEST });
+  try {
+    const { data } = await api.put(`/api/admin/restaurants/${restaurantId}`, restaurantData);
+    dispatch({ type: UPDATE_RESTAURANT_SUCCESS, payload: data });
+  } catch (err) {
+    dispatch({ type: UPDATE_RESTAURANT_FAILURE, payload: err?.response?.data || err.message });
+  }
+};
 
-export const updateRestaurant = ({restaurantId, restaurantData, jwt})    => async(dispatch) => {
-   dispatch({type: UPDATE_RESTAURANT_REQUEST})
-   try {
-      const res = await api.put(`/api/admin/restaurants/${restaurantId}`, restaurantData,
-         {
-         headers: {
-            Authorization: `Bearer ${jwt}`
-         }
-      } )
-      
-      dispatch({type: UPDATE_RESTAURANT_SUCCESS, payload: res.data})
-      console.log("updated restaurant", res.data)
-   } catch (err) {
-      dispatch({type: UPDATE_RESTAURANT_FAILURE, payload: err})
-      console.log("error", err)
-   }
-}
+// DELETE /api/admin/restaurants/{id}  (ADMIN)
+export const deleteRestaurant = ({ restaurantId }) => async (dispatch) => {
+  dispatch({ type: DELETE_RESTAURANT_REQUEST, meta: { restaurantId } });
+  try {
+    await api.delete(`/api/admin/restaurants/${restaurantId}`);
+    dispatch({ type: DELETE_RESTAURANT_SUCCESS, payload: restaurantId });
+  } catch (err) {
+    dispatch({ type: DELETE_RESTAURANT_FAILURE, payload: err?.response?.data || err.message });
+  }
+};
 
-export const deleteRestaurant = ({restaurantId, jwt})    => async(dispatch) => {
-   dispatch({type: DELETE_RESTAURANT_REQUEST})
-   try {
-      const res = await api.delete(`/api/admin/restaurants/${restaurantId}`, 
-         {
-         headers: {
-            Authorization: `Bearer ${jwt}`
-         }
-      })
+// PUT /api/admin/restaurants/{id}/status  (ADMIN)
+export const updateRestaurantStatus = ({ restaurantId }) => async (dispatch) => {
+  dispatch({ type: UPDATE_RESTAURANT_STATUS_REQUEST, meta: { restaurantId } });
+  try {
+    const { data } = await api.put(`/api/admin/restaurants/${restaurantId}/status`, {});
+    dispatch({ type: UPDATE_RESTAURANT_STATUS_SUCCESS, payload: data });
+  } catch (err) {
+    dispatch({ type: UPDATE_RESTAURANT_STATUS_FAILURE, payload: err?.response?.data || err.message });
+  }
+};
 
-      console.log("deleted restaurant", res.data);
-      dispatch({type: DELETE_RESTAURANT_SUCCESS, payload: restaurantId})
-   } catch (err) {
-      console.log("error", err)
-      dispatch({type: DELETE_RESTAURANT_FAILURE, payload: err})
-   }
-}
+/** ===================== EVENTS (public? + admin) ===================== **/
 
-export const updateRestaurantStatus = ({restaurantId, jwt})    => async(dispatch) => {
-   dispatch({type: UPDATE_RESTAURANT_STATUS_REQUEST})
-   try {
-      const res = await api.put(`/api/admin/restaurants/${restaurantId}/status`, {},
-         {
-         headers: {
-            Authorization: `Bearer ${jwt}`
-         }
-      } )
-      console.log("updated restaurant", res.data)
-      dispatch({type: UPDATE_RESTAURANT_STATUS_SUCCESS, payload: res.data})
-   } catch (err) {
-      dispatch({type: UPDATE_RESTAURANT_STATUS_FAILURE, payload: err})
-      console.log("error", err)
-   }
-}
+// POST /api/admin/events/restaurant/{restaurantId}  (ADMIN)
+export const createEvenAction = ({ data: body, restaurantId }) => {
+  return async (dispatch) => {
+    dispatch({ type: CREATE_EVENTS_REQUEST });
+    try {
+      const { data } = await api.post(`/api/admin/events/restaurant/${restaurantId}`, body);
+      dispatch({ type: CREATE_EVENTS_SUCCESS, payload: data });
+    } catch (err) {
+      dispatch({ type: CREATE_EVENTS_FAILURE, payload: err?.response?.data || err.message });
+    }
+  };
+};
 
+// GET /api/events  (Khả năng PUBLIC – controller events không show; để chắc ăn dùng meta.isPublic)
+export const getAllEvents = () => async (dispatch) => {
+  dispatch({ type: GET_ALL_EVENTS_REQUEST });
+  try {
+    const { data } = await api.get(`/api/events`, { meta: { isPublic: true } });
+    dispatch({ type: GET_ALL_EVENTS_SUCCESS, payload: data });
+  } catch (err) {
+    dispatch({ type: GET_ALL_EVENTS_FAILURE, payload: err?.response?.data || err.message });
+  }
+};
 
-export const createEvenAction = ({data, jwt, restaurantId}) => {
-   return async(dispatch) => {
-   dispatch({type: CREATE_EVENTS_REQUEST})
-   try {
-      const res = await api.post(`api/admin/events/restaurant/${restaurantId}`, data, {
-         headers: {
-            Authorization: `Bearer ${jwt}` 
-         } 
-      });
-     
-      dispatch({type: CREATE_EVENTS_SUCCESS, payload: res.data})
-      console.log("created event: ", res.data)
-   } catch (err) {
-      dispatch({type: CREATE_EVENTS_FAILURE, payload: err})
-      console.log("error", err)
-   }
-}}
+// DELETE /api/admin/events/{eventId}  (ADMIN)
+export const deleteEventAction = ({ eventId }) => async (dispatch) => {
+  dispatch({ type: DELETE_EVENTS_REQUEST, meta: { eventId } });
+  try {
+    await api.delete(`/api/admin/events/${eventId}`);
+    dispatch({ type: DELETE_EVENTS_SUCCESS, payload: eventId });
+  } catch (err) {
+    dispatch({ type: DELETE_EVENTS_FAILURE, payload: err?.response?.data || err.message });
+  }
+};
 
+// GET /api/admin/events/restaurant/{restaurantId}  (ADMIN – nếu muốn public thì thêm meta.isPublic)
+export const getRestaurantsEvents = ({ restaurantId }) => async (dispatch) => {
+  dispatch({ type: GET_RESTAURANTS_EVENTS_REQUEST });
+  try {
+    const { data } = await api.get(`/api/admin/events/restaurant/${restaurantId}`);
+    dispatch({ type: GET_RESTAURANTS_EVENTS_SUCCESS, payload: data });
+  } catch (err) {
+    dispatch({ type: GET_RESTAURANTS_EVENTS_FAILURE, payload: err?.response?.data || err.message });
+  }
+};
 
-export const getAllEvents = (token) => async(dispatch) => {
-   dispatch({type: GET_ALL_EVENTS_REQUEST})
-   try {
-      const res = await api.get("api/events", {
-         headers: {
-            Authorization: `Bearer ${token}` 
-         } 
-      });
-     
-      console.log("all events", res.data)
-      dispatch({type: GET_ALL_EVENTS_SUCCESS, payload: res.data})
-   } catch (err) {
-      dispatch({type: GET_ALL_EVENTS_FAILURE, payload: err})
-      console.log("error", err)
-   }
-}
+/** ===================== CATEGORY (admin + public) ===================== **/
 
-export const deleteEventAction = ({eventId, jwt}) => async(dispatch) => {
-   dispatch({type: DELETE_EVENTS_REQUEST})
-   try {
-      const res = await api.delete(`/api/admin/events/${eventId}`, 
-         {
-         headers: {
-            Authorization: `Bearer ${jwt}`
-         }
-      })
+// POST /api/admin/category  (ADMIN)
+export const createCategoryAction = ({ data: body }) => {
+  return async (dispatch) => {
+    dispatch({ type: CREATE_CATEGORY_REQUEST });
+    try {
+      const { data } = await api.post(`/api/admin/category`, body);
+      dispatch({ type: CREATE_CATEGORY_SUCCESS, payload: data });
+    } catch (err) {
+      // ✅ sửa lỗi: trước đây dispatch nhầm CREATE_EVENTS_FAILURE
+      dispatch({ type: CREATE_CATEGORY_FAILURE, payload: err?.response?.data || err.message });
+    }
+  };
+};
 
-      console.log("deleted events", res.data);
-      dispatch({type: DELETE_EVENTS_SUCCESS, payload: eventId})
-   } catch (err) {
-      console.log("error", err)
-      dispatch({type: DELETE_EVENTS_FAILURE, payload: err})
-   }
-}
-
-export const getRestaurantsEvents = (restaurantId,token) => async(dispatch) => {
-   dispatch({type: GET_RESTAURANTS_EVENTS_REQUEST})
-   try {
-      const res = await api.get(`api/admin/events/restaurant/${restaurantId}`, {
-         headers: {
-            Authorization: `Bearer ${token}` 
-         } 
-      });
-     
-      console.log("get restaurants events", res.data)
-      dispatch({type: GET_RESTAURANTS_EVENTS_SUCCESS, payload: res.data})
-   } catch (err) {
-      dispatch({type: GET_RESTAURANTS_EVENTS_FAILURE, payload: err})
-      console.log("error", err)
-   }
-}
-
-export const createCategoryAction = ({data, jwt}) => {
-   return async(dispatch) => {
-   dispatch({type: CREATE_CATEGORY_REQUEST})
-   try {
-      const res = await api.post(`api/admin/category`, data, {
-         headers: {
-            Authorization: `Bearer ${jwt}` 
-         } 
-      });
-     
-      dispatch({type: CREATE_CATEGORY_SUCCESS, payload: res.data})
-      console.log("created category: ", res.data)
-   } catch (err) {
-      dispatch({type: CREATE_EVENTS_FAILURE, payload: err})
-      console.log("error", err)
-   }
-}}
-
-export const getRestaurantsCategory = ({jwt, restaurantId}) => async(dispatch) => {
-   dispatch({type: GET_RESTAURANTS_CATEGORY_REQUEST})
-   try {
-      const res = await api.get(`api/category/restaurant/${restaurantId}`, {
-         headers: {
-            Authorization: `Bearer ${jwt}` 
-         } 
-      });
-     
-      console.log("get restaurants category", res.data)
-      dispatch({type: GET_RESTAURANTS_CATEGORY_SUCCESS, payload: res.data})
-   } catch (err) {
-      dispatch({type: GET_RESTAURANTS_CATEGORY_FAILURE, payload: err})
-      console.log("error category", err)
-   }
-}
+// GET /api/category/restaurant/{id}  (PUBLIC theo CategoryController)
+export const getRestaurantsCategory = ({ restaurantId }) => async (dispatch) => {
+  dispatch({ type: GET_RESTAURANTS_CATEGORY_REQUEST });
+  try {
+    const { data } = await api.get(`/api/category/restaurant/${restaurantId}`, {
+      meta: { isPublic: true }, // đảm bảo không đính kèm Authorization
+    });
+    dispatch({ type: GET_RESTAURANTS_CATEGORY_SUCCESS, payload: data });
+  } catch (err) {
+    dispatch({ type: GET_RESTAURANTS_CATEGORY_FAILURE, payload: err?.response?.data || err.message });
+  }
+};

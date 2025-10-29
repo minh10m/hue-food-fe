@@ -10,20 +10,20 @@ const Profile = () => {
   const [openSidebar, setOpenSidebar] = useState(false);
   return (
     <div className='lg:flex justify-between'>
-      <div className='sticky h-[80vh] lg:w-[20%]'>
-        <ProfileNavigation open={openSidebar}/>
+      <div className="sticky top-14 md:top-16
+                h-[calc(100vh-56px)] md:h-[calc(100vh-64px)]
+                overflow-auto lg:w-[20%]">
+  <ProfileNavigation open={openSidebar}/>
+</div>
 
-      </div>
 
-      <div className='lg:w-[80%]'>
+      <div className='lg:w-[80%] px-2 lg:px-6'>
         <Routes>
         <Route path='/' element={<UserProfile/>}/>
         <Route path='/orders' element={<Orders/>}/>
         <Route path='/address' element={<Address/>}/>
         <Route path='/favorites' element={<Favorites/>}/>
         <Route path='/events' element={<Event/>}/>
-
-
         </Routes>
       </div>
     </div>
