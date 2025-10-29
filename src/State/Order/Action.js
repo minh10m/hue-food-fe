@@ -1,42 +1,46 @@
+// src/State/Order/Action.js
 import { api } from "../../component/config/api";
-import { CREATE_ORDER_FAILURE, CREATE_ORDER_REQUEST, CREATE_ORDER_SUCCESS, GET_USERS_ORDERS_FAILURE, GET_USERS_ORDERS_REQUEST, GET_USERS_ORDERS_SUCCESS } from "./ActionType";
+import {
+  CREATE_ORDER_REQUEST, CREATE_ORDER_SUCCESS, CREATE_ORDER_FAILURE,
+  GET_USERS_ORDERS_REQUEST, GET_USERS_ORDERS_SUCCESS, GET_USERS_ORDERS_FAILURE,
+} from "./ActionType";
 
-export const createOrder = (reqData) => {
-   return async(dispatch) => {
-   dispatch({type: CREATE_ORDER_REQUEST})
-   try {
-      const {data} = await api.post("api/order", reqData.order, {
-         headers: {
-            Authorization: `Bearer ${reqData.jwt}` 
-         } 
+// Tạo đơn hàng (user) -> /api/order
+export const createOrder = ({ order }) => {
+  return async (dispatch) => {
+    dispatch({ type: CREATE_ORDER_REQUEST });
+    try {
+      const { data } = await api.post(`/api/order`, order);
+
+      // server trả PaymentResponse, nếu có payment_url thì redirect
+      if (data?.payment_url) {
+        window.location.href = data.payment_url;
+      }
+
+      dispatch({ type: CREATE_ORDER_SUCCESS, payload: data });
+    } catch (err) {
+      console.log("createOrder error", err);
+      dispatch({
+        type: CREATE_ORDER_FAILURE,
+        payload: err?.response?.data || err.message,
       });
+    }
+  };
+};
 
-      if (data.payment_url) {
-         window.location.href = data.payment_url;
-      }  
-
-      console.log("created order: ", data)
-      dispatch({type: CREATE_ORDER_SUCCESS, payload: data})
-      
-   } catch (err) {
-      console.log("error", err)
-      dispatch({type: CREATE_ORDER_FAILURE, payload: err})
-   }
-}}
-
-export const getUsersOrders = (jwt) => async(dispatch) => {
-   dispatch({type: GET_USERS_ORDERS_REQUEST})
-   try {
-      const {data} = await api.get("api/order/user", {
-         headers: {
-            Authorization: `Bearer ${jwt}` 
-         } 
+// Lịch sử đơn của user -> /api/order/user
+export const getUsersOrders = () => {
+  return async (dispatch) => {
+    dispatch({ type: GET_USERS_ORDERS_REQUEST });
+    try {
+      const { data } = await api.get(`/api/order/user`);
+      dispatch({ type: GET_USERS_ORDERS_SUCCESS, payload: data });
+    } catch (err) {
+      console.log("getUsersOrders error", err);
+      dispatch({
+        type: GET_USERS_ORDERS_FAILURE,
+        payload: err?.response?.data || err.message,
       });
-     
-      console.log("users orders: ", data)
-      dispatch({type: GET_USERS_ORDERS_SUCCESS, payload: data})      
-   } catch (err) {
-      dispatch({type: GET_USERS_ORDERS_FAILURE, payload: err})
-      console.log("error", err)
-   }
-}
+    }
+  };
+};

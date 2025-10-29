@@ -9,7 +9,7 @@ import {
   // ---- Forgot password flow ----
   FORGOT_VERIFY_EMAIL_REQUEST, FORGOT_VERIFY_EMAIL_SUCCESS, FORGOT_VERIFY_EMAIL_FAILURE,
   FORGOT_VERIFY_OTP_REQUEST,   FORGOT_VERIFY_OTP_SUCCESS,   FORGOT_VERIFY_OTP_FAILURE,
-  CHANGE_PASSWORD_REQUEST,     CHANGE_PASSWORD_SUCCESS,     CHANGE_PASSWORD_FAILURE,
+  CHANGE_PASSWORD_REQUEST,     CHANGE_PASSWORD_SUCCESS,     CHANGE_PASSWORD_FAILURE, GET_MY_FAVORITES_REQUEST, GET_MY_FAVORITES_SUCCESS, GET_MY_FAVORITES_FAILURE,
   FORGOT_RESET_FLAGS
 } from "./ActionType";
 
@@ -43,6 +43,7 @@ export const authReducer = (state = initialState, action) => {
     case LOGIN_REQUEST:
     case GET_USER_REQUEST:
     case ADD_TO_FAVORITE_REQUEST:
+    case GET_MY_FAVORITES_REQUEST:
       return {
         ...state,
         isLoading: true,
@@ -88,6 +89,11 @@ export const authReducer = (state = initialState, action) => {
     }
 
     // ====== Toggle favorite ======
+    case GET_MY_FAVORITES_SUCCESS: {
+      const list = Array.isArray(action.payload) ? action.payload : [];
+      return { ...state, isLoading: false, favorites: list, error: null };
+    }
+
     case ADD_TO_FAVORITE_SUCCESS:
       return {
         ...state,
@@ -111,6 +117,7 @@ export const authReducer = (state = initialState, action) => {
     case LOGIN_FAILURE:
     case GET_USER_FAILURE:
     case ADD_TO_FAVORITE_FAILURE:
+    case GET_MY_FAVORITES_FAILURE:
       return {
         ...state,
         isLoading: false,

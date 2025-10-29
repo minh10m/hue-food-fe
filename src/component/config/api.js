@@ -18,7 +18,6 @@ const PUBLIC_PATHS = [
   /^\/swagger-ui\//,
   /^\/swagger-resources\//,
   /^\/webjars\//,
-  /^\/api\/restaurants\//,
 ];
 
 api.interceptors.request.use((config) => {
@@ -36,7 +35,12 @@ api.interceptors.request.use((config) => {
   const isPublicByPath = PUBLIC_PATHS.some((re) => re.test(pathname));
   const isPublic = isPublicOverride || isPublicByPath;
 
-  const token = localStorage.getItem("access_token") || "";
+  const token =
+  localStorage.getItem("access_token") ||
+  localStorage.getItem("jwt") ||
+  sessionStorage.getItem("access_token") ||
+  sessionStorage.getItem("jwt") ||
+  "";
 
   if (!isPublic && token) {
     config.headers.Authorization = `Bearer ${token}`;

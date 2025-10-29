@@ -1,39 +1,48 @@
+// src/State/Order/AdminAction.js
 import { api } from "../../component/config/api";
-import { UPDATE_CARTITEM_FAILURE } from "../Cart/ActionType";
-import { GET_RESTAURANT_ORDER_FAILURE, GET_RESTAURANT_ORDER_REQUEST, GET_RESTAURANT_ORDER_SUCCESS, UPDATE_ORDER_STATUS_REQUEST, UPDATE_ORDER_STATUS_SUCCESS } from "./ActionType";
+import {
+  GET_RESTAURANT_ORDER_REQUEST,
+  GET_RESTAURANT_ORDER_SUCCESS,
+  GET_RESTAURANT_ORDER_FAILURE,
+  UPDATE_ORDER_STATUS_REQUEST,
+  UPDATE_ORDER_STATUS_SUCCESS,
+  UPDATE_ORDER_STATUS_FAILURE,
+} from "./ActionType";
 
-export const updateOrderStatus = ({orderId, orderStatus, jwt})  => async(dispatch) => {
-   dispatch({type: UPDATE_ORDER_STATUS_REQUEST})
-   try {
-      const response = await api.put(`/api/admin/orders/${orderId}/${orderStatus}`, {},
-         {
-         headers: {
-            Authorization: `Bearer ${jwt}`
-         }
-      } )
-      console.log("updated order:", response.data)
-      dispatch({type: UPDATE_ORDER_STATUS_SUCCESS, payload: response.data})
-   } catch (err) {
-      dispatch({type: UPDATE_CARTITEM_FAILURE, payload: err})
-      console.log("error", err)
-   }
-}
-
-
-export const fetchRestaurantOrder = ({restaurantId, orderStatus, jwt}) => async(dispatch) => {
-   dispatch({type: GET_RESTAURANT_ORDER_REQUEST})
-   try {
-      const {data} = await api.get(`/api/admin/order/restaurant/${restaurantId}`, {
-         params: {order_status: orderStatus},
-         headers: {
-            Authorization: `Bearer ${jwt}` 
-         } 
+// GET /api/admin/order/restaurant/{id}?orderStatus=...
+export const getRestaurantOrders = ({ restaurantId, orderStatus }) => {
+  return async (dispatch) => {
+    dispatch({ type: GET_RESTAURANT_ORDER_REQUEST, meta: { restaurantId, orderStatus } });
+    try {
+      const { data } = await api.get(`/api/admin/order/restaurant/${restaurantId}`, {
+        params: { orderStatus: orderStatus || undefined },
       });
-     
-      dispatch({type: GET_RESTAURANT_ORDER_SUCCESS, payload: data})
-      console.log("restaurant order: ", data)
-   } catch (err) {
-      dispatch({type: GET_RESTAURANT_ORDER_FAILURE, payload: err})
-      console.log("error", err)
-   }
-}
+      dispatch({ type: GET_RESTAURANT_ORDER_SUCCESS, payload: data, meta: { restaurantId, orderStatus } });
+    } catch (err) {
+      dispatch({
+        type: GET_RESTAURANT_ORDER_FAILURE,
+        payload: err?.response?.data || err.message,
+        error: true,
+        meta: { restaurantId, orderStatus },
+      });
+    }
+  };
+};
+
+// PUT /api/admin/order/{orderId}/{orderStatus}
+export const updateOrderStatus = ({ orderId, orderStatus }) => {
+  return async (dispatch) => {
+    dispatch({ type: UPDATE_ORDER_STATUS_REQUEST, meta: { orderId, orderStatus } });
+    try {
+      const { data } = await api.put(`/api/admin/order/${orderId}/${encodeURIComponent(orderStatus)}`);
+      dispatch({ type: UPDATE_ORDER_STATUS_SUCCESS, payload: data, meta: { orderId, orderStatus } });
+    } catch (err) {
+      dispatch({
+        type: UPDATE_ORDER_STATUS_FAILURE,
+        payload: err?.response?.data || err.message,
+        error: true,
+        meta: { orderId, orderStatus },
+      });
+    }
+  };
+};

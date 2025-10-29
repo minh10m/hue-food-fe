@@ -3,7 +3,7 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CustomerRoute from './Routers/CustomerRoute';
-import { getUser } from "./State/Authentication/Action";
+import { getUser, getMyFavorites } from "./State/Authentication/Action";
 import { findCart } from "./State/Cart/Action";
 import { darkTheme } from './Theme/DarkTheme';
 import { ToastContainer } from 'react-toastify'
@@ -17,6 +17,7 @@ function App() {
     if (accessToken) {
       dispatch(getUser());
       dispatch(findCart());
+      dispatch(getMyFavorites());
     }
   }, [accessToken, dispatch]);
 

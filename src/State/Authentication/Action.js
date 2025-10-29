@@ -1,6 +1,6 @@
 import axios from "axios";
 import { api, API_URL } from "../../component/config/api";
-import { ADD_TO_FAVORITE_FAILURE, ADD_TO_FAVORITE_REQUEST, ADD_TO_FAVORITE_SUCCESS, CHANGE_PASSWORD_FAILURE, CHANGE_PASSWORD_REQUEST, CHANGE_PASSWORD_SUCCESS, FORGOT_VERIFY_EMAIL_FAILURE, FORGOT_VERIFY_EMAIL_REQUEST, FORGOT_VERIFY_EMAIL_SUCCESS, FORGOT_VERIFY_OTP_FAILURE, FORGOT_VERIFY_OTP_REQUEST, FORGOT_VERIFY_OTP_SUCCESS, GET_USER_FAILURE, GET_USER_REQUEST, GET_USER_SUCCESS, LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS, LOGOUT, REGISTER_FAILURE, REGISTER_REQUEST, REGISTER_SUCCESS, FORGOT_RESET_FLAGS } from "./ActionType";
+import { ADD_TO_FAVORITE_FAILURE, ADD_TO_FAVORITE_REQUEST, ADD_TO_FAVORITE_SUCCESS, CHANGE_PASSWORD_FAILURE, CHANGE_PASSWORD_REQUEST, CHANGE_PASSWORD_SUCCESS, FORGOT_VERIFY_EMAIL_FAILURE, FORGOT_VERIFY_EMAIL_REQUEST, FORGOT_VERIFY_EMAIL_SUCCESS, FORGOT_VERIFY_OTP_FAILURE, FORGOT_VERIFY_OTP_REQUEST, FORGOT_VERIFY_OTP_SUCCESS, GET_USER_FAILURE, GET_USER_REQUEST, GET_USER_SUCCESS, LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS, LOGOUT, REGISTER_FAILURE, REGISTER_REQUEST, REGISTER_SUCCESS, FORGOT_RESET_FLAGS, GET_MY_FAVORITES_FAILURE, GET_MY_FAVORITES_SUCCESS, GET_MY_FAVORITES_REQUEST } from "./ActionType";
 
 
 export const registerUser = (reqData) => async (dispatch) => {
@@ -55,6 +55,8 @@ export const registerUser = (reqData) => async (dispatch) => {
     // cập nhật redux: App sẽ tự fetch user + cart dựa vào token này
     dispatch({ type: LOGIN_SUCCESS, payload: accessToken });
 
+    dispatch(getMyFavorites());
+
     // điều hướng (tuỳ role nếu cần)
     if (role === "ROLE_ADMIN") navigate("/admin");
     else navigate("/");
@@ -81,24 +83,26 @@ export const getUser = () => async (dispatch) => {
    }
  };
 
-export const addToFavorite = (jwt, restaurantId) => async(dispatch) => {
-   dispatch({type: ADD_TO_FAVORITE_REQUEST})
-   try {
-      const {data} = await api.put(`/api/restaurants/${restaurantId}/add-favorites`, {
-         
-      },{
-         headers: {
-            Authorization: `Bearer ${jwt}`
-         }
-      } )
-      
-      dispatch({type: ADD_TO_FAVORITE_SUCCESS, payload: data})
-      console.log("added to favorite", data)
-   } catch (err) {
-      dispatch({type: ADD_TO_FAVORITE_FAILURE, payload: err})
-      console.log("error", err)
-   }
-}
+ export const addToFavorite = (restaurantId) => async (dispatch) => {
+  dispatch({ type: ADD_TO_FAVORITE_REQUEST, meta: { restaurantId } });
+  try {
+    const { data } = await api.put(`/api/me/favorites/${restaurantId}`, {}, { meta: { isPublic: false } });
+    dispatch({ type: ADD_TO_FAVORITE_SUCCESS, payload: data });
+  } catch (err) {
+    dispatch({ type: ADD_TO_FAVORITE_FAILURE, payload: err?.response?.data || err.message });
+  }
+};
+
+export const getMyFavorites = () => async (dispatch) => {
+  dispatch({ type: GET_MY_FAVORITES_REQUEST });
+  try {
+    const { data } = await api.get(`/api/me/favorites`, { meta: { isPublic: false } });
+    dispatch({ type: GET_MY_FAVORITES_SUCCESS, payload: data });
+  } catch (err) {
+    dispatch({ type: GET_MY_FAVORITES_FAILURE, payload: err?.response?.data || err.message });
+  }
+};
+
 
 export const logout = () => async (dispatch) => {
   try {
