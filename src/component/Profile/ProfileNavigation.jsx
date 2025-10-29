@@ -21,7 +21,6 @@ const menu = [
 ];
 
 const ProfileNavigation = ({ open = false, onClose }) => {
-  const theme = useTheme();
   const isSmall = useMediaQuery('(max-width:900px)');
   const dispatch = useDispatch();
   const navigate = useNavigate();

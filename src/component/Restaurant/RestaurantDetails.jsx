@@ -16,8 +16,6 @@ const foodTypes =[
   {label:"Seasonal", value: "seasonal"},
 ]
 
-const menu = [1,1,1,1,1,1]
-
 const RestaurantDetails = () => {
   const [foodType, setFoodType] = useState("all")
 
@@ -32,21 +30,15 @@ const RestaurantDetails = () => {
 
   const handleFilter = (e) => {
     setFoodType(e.target.value)
-    console.log(e.target.value, e.target.name)
   }
 
   const handleFilterCategory = (e, value) => {
     setSelectedCategory(value);
-    console.log(e.target.value, e.target.name, value)
   }
 
-  console.log("restaurant", restaurant)
-  console.log("id", id)
-
   useEffect(() => {
-    dispatch(getRestaurantId({jwt, restaurantId: id}));
-    dispatch(getRestaurantsCategory({jwt, restaurantId: id}));
-    
+    dispatch(getRestaurantId({restaurantId: id}));
+    dispatch(getRestaurantsCategory({restaurantId: id}));
   }, []);
 
 

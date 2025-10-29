@@ -5,23 +5,15 @@ import RestaurantCard from '../Restaurant/RestaurantCard';
 import "./Home.css";
 import MultiItemCarous from './MultiItemCarous';
 
-const restaurants = [1,1,1,1,1,1,1,1]
-
 export const Home = () => {
 
   const dispatch = useDispatch();
 
-  const jwt = localStorage.getItem('jwt');
-
   const {restaurant} = useSelector(store => store)
-  console.log("restaurant: ",restaurant)
 
   useEffect(() => {
-    dispatch(getAllRestaurantAction(jwt));
-    
-  }, [])
-
-
+    dispatch(getAllRestaurantAction());
+  }, [dispatch])
 
   return (
     <div className="pb-12">

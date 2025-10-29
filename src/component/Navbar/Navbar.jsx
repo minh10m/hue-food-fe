@@ -3,16 +3,16 @@ import SearchIcon from "@mui/icons-material/Search";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { Avatar, Badge, IconButton } from "@mui/material";
 import React from "react";
-import { useSelector } from "react-redux";
+import { useSelector, shallowEqual } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import "./Navbar.css";
 
-
 export const Navbar = () => {
 
-  const {auth, cart} = useSelector(store => store)
-
   const navigate = useNavigate();
+
+  const auth = useSelector((s) => s.auth, shallowEqual);
+  const cart = useSelector((s) => s.cart, shallowEqual);
 
   const handleAvatarClick = () => {
     // if(auth.user?.role === 'ROLE_CUSTOMER' ){

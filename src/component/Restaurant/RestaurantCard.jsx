@@ -3,7 +3,7 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { Card, Chip, IconButton, Tooltip } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
 import React, { useEffect, useMemo, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { addToFavorite } from '../../State/Authentication/Action';
 import { isPresentInFavorites } from '../config/logic';
 import { useNavigate } from 'react-router-dom';
@@ -11,11 +11,15 @@ import { useNavigate } from 'react-router-dom';
 const RestaurantCard = ({ item }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const jwt = localStorage.getItem('jwt') || '';
-  const { auth } = useSelector((store) => store);
+
+  // ✅ Chỉ select đúng dữ liệu cần dùng (tránh lấy root state)
+  const favorites = useSelector(s => s.auth?.favorites ?? [], shallowEqual);
 
   // present trong store
-  const presentInStore = useMemo(() => isPresentInFavorites(auth.favorites, item), [auth.favorites, item]);
+  const presentInStore = useMemo(
+    () => isPresentInFavorites(favorites, item),
+    [favorites, item]
+  );
 
   // optimistic state
   const [liked, setLiked] = useState(presentInStore);
@@ -26,14 +30,15 @@ const RestaurantCard = ({ item }) => {
 
   const handleAddToFavorites = async (e) => {
     e.stopPropagation(); // không trigger click vào card/ảnh
-    if (!jwt || busy) return;
+    if (busy || !item?.id) return;
 
     setBusy(true);
     const prev = liked;
     setLiked(!prev); // OPTIMISTIC: đổi icon ngay
 
     try {
-      await dispatch(addToFavorite(jwt, item.id));
+      // ✅ Không cần jwt, interceptor tự gắn Authorization
+      await dispatch(addToFavorite(item.id));
     } catch (err) {
       // rollback nếu lỗi
       setLiked(prev);
@@ -95,8 +100,12 @@ const RestaurantCard = ({ item }) => {
             >
               {item.name || 'Tên cửa hàng'}
             </h3>
-            <p className="text-gray-400 text-sm mt-1 line-clamp-2">{item.description || item.cuisineType || 'Đặc trưng ẩm thực Huế'}</p>
-             <p className="text-gray-500 text-xs mt-1">{item.street}{item.street && item.city ? ', ' : ''}{item.city}</p>
+            <p className="text-gray-400 text-sm mt-1 line-clamp-2">
+              {item.description || item.cuisineType || 'Đặc trưng ẩm thực Huế'}
+            </p>
+            <p className="text-gray-500 text-xs mt-1">
+              {item.street}{item.street && item.city ? ', ' : ''}{item.city}
+            </p>
           </div>
 
           {/* Nút Favorite mượt mà */}
@@ -104,7 +113,7 @@ const RestaurantCard = ({ item }) => {
             <span>
               <IconButton
                 onClick={handleAddToFavorites}
-                disabled={busy}
+                disabled={busy || !item?.id}
                 aria-pressed={liked}
                 aria-label={liked ? 'Bỏ yêu thích' : 'Thêm yêu thích'}
                 sx={{
