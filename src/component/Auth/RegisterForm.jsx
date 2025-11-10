@@ -67,7 +67,7 @@ const RegisterForm = () => {
     // onChange={handleChange}
   >
     <MenuItem value={"ROLE_CUSTOMER"}>Customer</MenuItem>
-    <MenuItem value={"ROLE_RESTAURANT"}>Restaurant owner</MenuItem>
+    <MenuItem value={"ROLE_RESTAURANT_OWNER"}>Restaurant owner</MenuItem>
   </Field>
 </FormControl>
 

@@ -16,6 +16,7 @@ import {
 const initialState = {
   // Auth
   user: null,
+  role: localStorage.getItem("role") || null, 
   isLoading: false,
   error: null,
   access_token: localStorage.getItem("access_token") || null,
@@ -67,9 +68,14 @@ export const authReducer = (state = initialState, action) => {
         ? action.payload
         : action.payload?.access_token || action.payload?.token || null;
 
+      const payloadRole = typeof action.payload === "object" && action.payload !== null
+        ? action.payload?.role || null
+        : null;
+
       return {
         ...state,
         isLoading: false,
+        role: payloadRole ?? state.role,
         access_token: token,
         error: null,
         success: "Login success"
@@ -80,10 +86,12 @@ export const authReducer = (state = initialState, action) => {
     case GET_USER_SUCCESS: {
       const hasToken = !!state.access_token;
       const user = hasToken ? action.payload : null;
+      const userRole = user?.role ?? state.role;
       return {
         ...state,
         isLoading: false,
         user,
+        role: userRole,
         favorites: user?.favorites ?? []
       };
     }
@@ -109,7 +117,8 @@ export const authReducer = (state = initialState, action) => {
       // Khuyên làm: xóa localStorage trong action creator LOGOUT, không làm ở reducer
       return {
         ...initialState,
-        access_token: null
+        access_token: null,
+        role: null
       };
 
     // ====== Auth failures ======

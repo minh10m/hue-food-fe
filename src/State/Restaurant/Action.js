@@ -42,18 +42,20 @@ export const getRestaurantId = ({ restaurantId }) => async (dispatch) => {
   }
 };
 
+
 // GET /api/admin/restaurants/user  (ADMIN – controller không show ở trên nhưng bạn đang dùng)
 export const getRestaurantByUserId = () => async (dispatch) => {
   dispatch({ type: GET_RESTAURANT_BY_USER_ID_REQUEST });
   try {
     const { data } = await api.get(`/api/admin/restaurants/user`);
+    console.log("[getRestaurantByUserId] response:", data);
     dispatch({ type: GET_RESTAURANT_BY_USER_ID_SUCCESS, payload: data });
   } catch (err) {
     dispatch({ type: GET_RESTAURANT_BY_USER_ID_FAILURE, payload: err?.response?.data || err.message });
   }
 };
 
-// POST /api/admin/restaurants  (ADMIN)
+// POST /api/admin/restaurants  
 export const createRestaurant = ({ data: body }) => {
   return async (dispatch) => {
     dispatch({ type: CREATE_RESTAURANT_REQUEST });
@@ -114,11 +116,13 @@ export const createEvenAction = ({ data: body, restaurantId }) => {
   };
 };
 
-// GET /api/events  (Khả năng PUBLIC – controller events không show; để chắc ăn dùng meta.isPublic)
+// GET /api/events 
 export const getAllEvents = () => async (dispatch) => {
   dispatch({ type: GET_ALL_EVENTS_REQUEST });
   try {
-    const { data } = await api.get(`/api/events`, { meta: { isPublic: true } });
+    console.log("getAllEvents");
+    const { data } = await api.get(`/api/events`,);
+    console.log("getAllEvents data", data);
     dispatch({ type: GET_ALL_EVENTS_SUCCESS, payload: data });
   } catch (err) {
     dispatch({ type: GET_ALL_EVENTS_FAILURE, payload: err?.response?.data || err.message });
@@ -150,28 +154,31 @@ export const getRestaurantsEvents = ({ restaurantId }) => async (dispatch) => {
 /** ===================== CATEGORY (admin + public) ===================== **/
 
 // POST /api/admin/category  (ADMIN)
-export const createCategoryAction = ({ data: body }) => {
+export const createCategoryAction = (body) => {
   return async (dispatch) => {
     dispatch({ type: CREATE_CATEGORY_REQUEST });
     try {
-      const { data } = await api.post(`/api/admin/category`, body);
-      dispatch({ type: CREATE_CATEGORY_SUCCESS, payload: data });
+      const response = await api.post(`/api/admin/category`, body);
+      dispatch({ type: CREATE_CATEGORY_SUCCESS, payload: response.data });
+      return response.data; // trả về để component await
     } catch (err) {
-      // ✅ sửa lỗi: trước đây dispatch nhầm CREATE_EVENTS_FAILURE
-      dispatch({ type: CREATE_CATEGORY_FAILURE, payload: err?.response?.data || err.message });
+      const payload = err?.response?.data || err?.message || "Unknown error";
+      dispatch({ type: CREATE_CATEGORY_FAILURE, payload });
+      throw err; // re-throw để component bắt
     }
   };
 };
 
-// GET /api/category/restaurant/{id}  (PUBLIC theo CategoryController)
+
+// GET /api/category/restaurant/{id}
 export const getRestaurantsCategory = ({ restaurantId }) => async (dispatch) => {
   dispatch({ type: GET_RESTAURANTS_CATEGORY_REQUEST });
   try {
-    const { data } = await api.get(`/api/category/restaurant/${restaurantId}`, {
-      meta: { isPublic: true }, // đảm bảo không đính kèm Authorization
-    });
+    const { data } = await api.get(`/api/category/restaurant/${restaurantId}`);
     dispatch({ type: GET_RESTAURANTS_CATEGORY_SUCCESS, payload: data });
+    console.log("categories payload", data);
   } catch (err) {
     dispatch({ type: GET_RESTAURANTS_CATEGORY_FAILURE, payload: err?.response?.data || err.message });
   }
 };
+

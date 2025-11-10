@@ -37,8 +37,6 @@ export const getMenuItemsByRestaurantId = ({ restaurantId, vegetarian = false, n
           seasonal,
           "food-category": foodCategory || undefined,
         },
-        // Nếu route này là public và bạn muốn bỏ token:
-        // meta: { isPublic: true },
       });
       dispatch({ type: GET_MENU_ITEMS_BY_RESTAURANT_ID_SUCCESS, payload: data });
     } catch (err) {

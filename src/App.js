@@ -2,29 +2,33 @@
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import CustomerRoute from './Routers/CustomerRoute';
-import { getUser, getMyFavorites } from "./State/Authentication/Action";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { Routers } from "./Routers/Routers";
+import { getMyFavorites, getUser } from "./State/Authentication/Action";
 import { findCart } from "./State/Cart/Action";
 import { darkTheme } from './Theme/DarkTheme';
-import { ToastContainer } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
+import { getRestaurantByUserId } from "./State/Restaurant/Action";
 
 function App() {
   const dispatch = useDispatch();
   const accessToken = useSelector(s => s.auth?.access_token);
+
 
   useEffect(() => {
     if (accessToken) {
       dispatch(getUser());
       dispatch(findCart());
       dispatch(getMyFavorites());
+      dispatch(getRestaurantByUserId())
     }
   }, [accessToken, dispatch]);
+
 
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline/>
-      <CustomerRoute/>
+      <Routers/>
       <ToastContainer position="top-right" autoClose={1500} />
     </ThemeProvider>
   );
