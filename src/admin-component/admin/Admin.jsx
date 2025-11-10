@@ -1,13 +1,13 @@
 import { Route, Routes } from "react-router-dom";
 import { AdminSideBar } from "./AdminSideBar";
-import { Dashboard } from "@mui/icons-material";
 import { Orders } from "../orders/Orders";
 import { Menu } from "../menu/Menu";
 import { FoodCategory } from "../food-category/FoodCategory";
 import { Ingredients } from "../ingredients/Ingredients";
-import { Events } from "../events/Events";
 import { RestaurantDetails } from "./RestaurantDetails";
 import { RestaurantDashboard } from "../dashboard/RestaurantDashboard";
+import { CreateMenuForm } from "../menu/CreateMenuForm";
+import { EventPage } from "../events/EventPage";
 
 export const Admin = () => {
   const handleClose = () => {};
@@ -24,8 +24,9 @@ export const Admin = () => {
             <Route path="/menu" element={<Menu />} />
             <Route path="/category" element={<FoodCategory />} />
             <Route path="/ingredients" element={<Ingredients />} />
-            <Route path="/events" element={<Events />} />
+            <Route path="/event" element={<EventPage/>} />
             <Route path="/details" element={<RestaurantDetails />} />
+            <Route path="/add-menu" element={<CreateMenuForm />} />
           </Routes>
         </div>
       </div>

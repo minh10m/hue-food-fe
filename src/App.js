@@ -8,18 +8,22 @@ import { Routers } from "./Routers/Routers";
 import { getMyFavorites, getUser } from "./State/Authentication/Action";
 import { findCart } from "./State/Cart/Action";
 import { darkTheme } from './Theme/DarkTheme';
+import { getRestaurantByUserId } from "./State/Restaurant/Action";
 
 function App() {
   const dispatch = useDispatch();
   const accessToken = useSelector(s => s.auth?.access_token);
+
 
   useEffect(() => {
     if (accessToken) {
       dispatch(getUser());
       dispatch(findCart());
       dispatch(getMyFavorites());
+      dispatch(getRestaurantByUserId())
     }
   }, [accessToken, dispatch]);
+
 
   return (
     <ThemeProvider theme={darkTheme}>
