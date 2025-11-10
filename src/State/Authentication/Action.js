@@ -1,6 +1,7 @@
 import axios from "axios";
 import { api, API_URL } from "../../component/config/api";
 import { ADD_TO_FAVORITE_FAILURE, ADD_TO_FAVORITE_REQUEST, ADD_TO_FAVORITE_SUCCESS, CHANGE_PASSWORD_FAILURE, CHANGE_PASSWORD_REQUEST, CHANGE_PASSWORD_SUCCESS, FORGOT_VERIFY_EMAIL_FAILURE, FORGOT_VERIFY_EMAIL_REQUEST, FORGOT_VERIFY_EMAIL_SUCCESS, FORGOT_VERIFY_OTP_FAILURE, FORGOT_VERIFY_OTP_REQUEST, FORGOT_VERIFY_OTP_SUCCESS, GET_USER_FAILURE, GET_USER_REQUEST, GET_USER_SUCCESS, LOGIN_FAILURE, LOGIN_REQUEST, LOGIN_SUCCESS, LOGOUT, REGISTER_FAILURE, REGISTER_REQUEST, REGISTER_SUCCESS, FORGOT_RESET_FLAGS, GET_MY_FAVORITES_FAILURE, GET_MY_FAVORITES_SUCCESS, GET_MY_FAVORITES_REQUEST } from "./ActionType";
+import { getRestaurantByUserId } from "../Restaurant/Action";
 
 
 export const registerUser = (reqData) => async (dispatch) => {
@@ -22,7 +23,7 @@ export const registerUser = (reqData) => async (dispatch) => {
      console.log("Register success", data);
  
      if (role === "ROLE_RESTAURANT_OWNER") {
-       reqData.navigate("/admin/restaurant");
+       reqData.navigate("/admin/restaurants");
      } else {
        reqData.navigate("/");
      }
@@ -37,7 +38,6 @@ export const registerUser = (reqData) => async (dispatch) => {
  export const loginUser = ({ userData, navigate }) => async (dispatch) => {
   dispatch({ type: LOGIN_REQUEST });
   try {
-    // đánh dấu public để interceptor không gắn Bearer
     const { data } = await api.post("/login", userData, { meta: { isPublic: true } });
 
     const accessToken  = data?.access_token;
@@ -45,20 +45,21 @@ export const registerUser = (reqData) => async (dispatch) => {
     const role         = data?.role;
 
     if (!accessToken) throw new Error("Missing access_token");
-
-    // lưu localStorage
+    
     localStorage.setItem("access_token", accessToken);
     console.log(accessToken);
     if (refreshToken) localStorage.setItem("refresh_token", refreshToken);
     if (role) localStorage.setItem("role", role);
 
-    // cập nhật redux: App sẽ tự fetch user + cart dựa vào token này
-    dispatch({ type: LOGIN_SUCCESS, payload: accessToken });
+    dispatch({ type: LOGIN_SUCCESS, payload: { access_token: accessToken, role } });
+
 
     dispatch(getMyFavorites());
 
-    // điều hướng (tuỳ role nếu cần)
-    if (role === "ROLE_ADMIN") navigate("/admin");
+    if (role === "ROLE_RESTAURANT_OWNER"){
+      await dispatch(getRestaurantByUserId());
+      navigate("/admin/restaurants");
+    } 
     else navigate("/");
 
     return data;
